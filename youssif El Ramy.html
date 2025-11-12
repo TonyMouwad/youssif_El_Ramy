@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>خدمة يوسف الرامي - دفن الموتى</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+/* ===== عام ===== */
+body {
+  margin:0;
+  font-family:'Cairo',sans-serif;
+  background:#f9f8f5;
+  color:#2e2e2e;
+  opacity:0;
+  transition: opacity 1s ease;
+}
+body.show {opacity:1;}
+section, .cards, .car-block, .slider-container {opacity:0; transform:translateY(30px); transition: all 1s ease;}
+
+/* ===== أقسام تظهر عند النزول ===== */
+section.visible, .cards.visible, .car-block.visible, .slider-container.visible {
+  opacity:1;
+  transform:translateY(0);
+}
+
+/* ===== Header ===== */
+header {
+  position:fixed; top:0; width:100%;
+  background:rgba(255,255,255,0.97);
+  display:flex; justify-content:space-between; align-items:center;
+  padding:15px 40px; box-shadow:0 2px 8px rgba(0,0,0,0.1);
+  z-index:1000;
+}
+.logo {font-weight:700;font-size:1.2rem;color:#b89c5a;}
+nav a {margin:0 10px;text-decoration:none;color:#2e2e2e;font-weight:600;transition:color 0.3s;}
+nav a:hover {color:#b89c5a;}
+
+/* ===== Hero ===== */
+.hero {
+  height:100vh;
+  background:linear-gradient(rgba(0,0,0,0.4),rgba(0,0,0,0.4)),url('https://images.unsplash.com/photo-1519681393784-d120267933ba?auto=format&fit=crop&w=1400&q=80') center/cover no-repeat;
+  display:flex;justify-content:center;align-items:center;
+  flex-direction:column;text-align:center;color:white;padding:20px;
+}
+.hero h1 {font-size:2.8rem;margin-bottom:15px;}
+.hero p {font-size:1.3rem;opacity:0.95;max-width:700px;}
+
+/* ===== Sections ===== */
+section {padding:100px 40px;text-align:center;}
+.section-title {font-size:2rem;margin-bottom:40px;color:#3e3e3e;position:relative;}
+.section-title::after {
+  content:'';width:70px;height:3px;background-color:#b89c5a;
+  position:absolute;bottom:-10px;right:50%;transform:translateX(50%);
+}
+
+/* ===== Cards ===== */
+.cards {display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:25px;}
+.card {background:#fff;border-radius:15px;box-shadow:0 4px 12px rgba(0,0,0,0.08);padding:30px 20px;transition:transform 0.3s,box-shadow 0.3s;}
+.card:hover {transform:translateY(-6px);box-shadow:0 6px 16px rgba(0,0,0,0.15);}
+.card i {font-size:45px;margin-bottom:15px;color:#b89c5a;}
+.card h3 {margin:10px 0;color:#3e3e3e;}
+.card p {font-size:0.95rem;color:#555;}
+
+/* ===== Cars ===== */
+.car-block {margin-bottom:60px;background:#fff;padding:20px;border-radius:12px;box-shadow:0 4px 10px rgba(0,0,0,0.05);}
+.car-block p {margin:15px 0 0;color:#333;font-weight:500;}
+.gallery {display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:20px;}
+.gallery img {width:100%;border-radius:12px;height:220px;object-fit:cover;transition:transform 0.3s,box-shadow 0.3s;cursor:pointer;}
+.gallery img:hover {transform:scale(1.05);box-shadow:0 5px 15px rgba(0,0,0,0.1);}
+
+/* ===== Slider ===== */
+.slider-container {display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:40px;background:#fff;padding:40px;border-radius:12px;box-shadow:0 4px 10px rgba(0,0,0,0.05);position:relative;overflow:hidden;}
+.slider {width:50%;position:relative;}
+.slider img {width:100%;border-radius:10px;height:350px;object-fit:cover;cursor:pointer;transition:0.5s;}
+.slider button {position:absolute;top:50%;transform:translateY(-50%);background:rgba(0,0,0,0.4);color:white;border:none;padding:10px 15px;cursor:pointer;border-radius:50%;}
+.slider button:hover {background:rgba(0,0,0,0.6);}
+.prev {left:10px;}
+.next {right:10px;}
+.slider-info {width:40%;text-align:right;}
+.slider-info h3 {color:#b89c5a;}
+.slider-info p {color:#555;font-size:1rem;}
+.price {margin-top:10px;color:#2e2e2e;font-weight:700;}
+
+/* ===== Lightbox ===== */
+#lightbox {display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.85);justify-content:center;align-items:center;flex-direction:column;z-index:2000;overflow:auto;}
+#lightbox-close {position:fixed;top:20px;right:30px;font-size:2rem;color:white;cursor:pointer;z-index:2100;}
+#lightbox-img {width:100%;height:auto;max-height:80vh;object-fit:contain;border-radius:10px;}
+#lightbox button {position:absolute;font-size:2rem;color:white;background:none;border:none;cursor:pointer;z-index:2100;}
+#lightbox .prev-btn {left:20px;}
+#lightbox .next-btn {right:20px;}
+#lightbox-caption {color:white;text-align:center;margin-top:15px;}
+#lightbox-index {color:white;margin-top:5px;font-size:0.9rem;}
+
+/* ===== CTA ===== */
+.cta-section {background:#b89c5a;color:white;text-align:center;padding:80px 20px;}
+.cta-button {background:white;color:#b89c5a;border:none;padding:15px 40px;font-size:1.1rem;border-radius:8px;cursor:pointer;transition:all 0.3s;}
+.cta-button:hover {background:#2e2e2e;color:white;}
+footer {background:#2e2e2e;color:white;padding:50px 20px;text-align:center;font-size:0.9rem;}
+footer a {color:#b89c5a;text-decoration:none;}
+footer a:hover {text-decoration:underline;}
+
+@media (max-width:768px) {
+  .slider {width:100%;}
+  .slider-info {width:100%;text-align:center;}
+  header {flex-direction:column;padding:10px;}
+  .hero h1 {font-size:2rem;}
+}
+</style>
+</head>
+<body>
+
+<header>
+<div class="logo"><i class="fa-solid fa-cross"></i> خدمة يوسف الرامي</div>
+<nav>
+<a href="#services">الخدمات</a>
+<a href="#cars">العربيات</a>
+<a href="#coffins">الصناديق</a>
+<a href="#supplies">التكفين    <br></a>
+</nav>
+</header>
+
+<section class="hero">
+<h1>"طوبى للأموات الذين يموتون في الرب" (رؤيا 14:13)</h1>
+<p>خدمة يوسف الرامي تقدم كل ما يلزم لترتيب انتقال الأحباء بسلام وكرامة.</p>
+</section>
+
+<!-- قسم من نحن -->
+<section id="about">
+  <h2 class="section-title">من نحن</h2>
+  <p style="max-width:700px;margin:0 auto 20px;">
+    خدمة يوسف الرامي هي خدمة مسيحية متخصصة في ترتيب مراسم دفن الموتى بكل احترام وكرامة. 
+    نسعى لتقديم كل ما يلزم من تجهيز الجثمان، ونقل، وصناديق دفن، وخدمات الكنيسة بطريقة محترفة ومريحة للأسر. 
+    فريقنا مدرب على التعامل مع كل التفاصيل بحب واهتمام لضمان السلام النفسي للأهالي في أوقات الحزن.
+  </p>
+  <div class="cards">
+    <div class="card"><i class="fa-solid fa-hands-praying"></i><h3>خدمة محترفة</h3><p>فريق مدرب يعمل باحترام ووقار في كل خطوة.</p></div>
+    <div class="card"><i class="fa-solid fa-heart"></i><h3>مساندة أسرية</h3><p>نحرص على تقديم الدعم النفسي والمساندة للأهالي.</p></div>
+    <div class="card"><i class="fa-solid fa-shield"></i><h3>أمان وثقة</h3><p>نضمن سلامة الجثمان والممتلكات خلال كل المراحل.</p></div>
+  </div>
+</section>
+
+<section id="services">
+<h2 class="section-title">الخدمات المتاحة</h2>
+<div class="cards">
+<div class="card"><i class="fa-solid fa-shawl"></i><h3>تجهيز الجثمان والتكفين</h3><p>نوفر مستلزمات التكفين كاملة مع فريق مدرب باحترام ووقار.</p></div>
+<div class="card"><i class="fa-solid fa-truck"></i><h3>نقل الجثمان</h3><p>عربيات مجهزة لنقل الجثمان بأمان.</p></div>
+<div class="card"><i class="fa-solid fa-box"></i><h3>توفير الصناديق</h3><p>صناديق فاخرة وأخرى اقتصادية تناسب كل الاحتياجات.</p></div>
+<div class="card"><i class="fa-solid fa-church"></i><h3>حجز قاعة الكنيسة</h3><p>تنظيم كامل للقاعة مع البوفيه والزهور.</p></div>
+<div class="card"><i class="fa-solid fa-book-bible"></i><h3>طلب صلاة الثالث</h3><p>تنسيق الصلاة مع الكهنة وترتيب الجدول حسب الأسرة.</p></div>
+<div class="card"><i class="fa-solid fa-bread-slice"></i><h3>قربان الأربعين</h3><p>تجهيز قربان الأربعين وتوصيله في الموعد المطلوب.</p></div>
+<div class="card"><i class="fa-solid fa-burger"></i><h3>أغابي السندوتشات</h3><p>توفير وجبات أغابي بسيطة تعبر عن المحبة والسلام.</p></div>
+<div class="card"><i class="fa-solid fa-gift"></i><h3>تذكارات الأربعين (قريبًا)</h3><p>هدايا تذكارية راقية للتوزيع في الأربعين.</p></div>
+</div>
+</section>
+
+<section id="cars">
+<h2 class="section-title">عربيات الخدمة</h2>
+<div class="car-block">
+<div class="gallery">
+<img src="pic/IMG-20251112-WA0014.jpg">
+<img src="pic/IMG-20251112-WA0015.jpg">
+<img src="pic/IMG-20251112-WA0016.jpg">
+<img src="pic/IMG-20251112-WA0017.jpg">
+</div>
+<p>🚐 <strong>Hyundai Starex 2006</strong> - بها 4 كراسي وجرار للتابوت</p>
+</div>
+<div class="car-block">
+<div class="gallery">
+<img src="pic/IMG-20251112-WA0009.jpg">
+<img src="pic/IMG-20251112-WA0010.jpg">
+<img src="pic/IMG-20251112-WA0011.jpg">
+<img src="pic/IMG-20251112-WA0012.jpg">
+</div>
+<p>🚐 <strong>Peugeot</strong> - بها 3 كراسي وجرار للتابوت</p>
+</div>
+</section>
+
+<section id="coffins">
+<h2 class="section-title">صناديق الدفن</h2>
+<p style="max-width:700px;margin:0 auto 20px;">صناديق الدفن المتنوعة: فاخرة واقتصادية مع وصف كامل لكل صندوق.</p>
+<div class="slider-container">
+<div class="slider">
+<button class="prev" onclick="moveSlide(-1,'coffin')">›</button>
+<img id="coffin-slide" src="pic/images.jpg" onclick="openLightbox('coffin')">
+<button class="next" onclick="moveSlide(1,'coffin')">‹</button>
+</div>
+<div class="slider-info">
+<h3 id="coffin-title">صندوق خشب زان مطعم</h3>
+<p id="coffin-desc">صندوق فاخر بلمسات ذهبية يصلح لجميع الفئات.</p>
+<div class="price">السعر: حسب الفئة</div>
+</div>
+</div>
+</section>
+
+<section id="supplies">
+<h2 class="section-title">مستلزمات التكفين</h2>
+<p style="max-width:700px;margin:0 auto 20px;">يتكون الكفن المسيحي من ٧ قطع: برنس خارجي، تونية، قميص، سروال، كفين، شراب، صليب</p>
+<div class="slider-container">
+<div class="slider-info">
+<h3 id="supply-title">قميص بصورة العذراء مريم</h3>
+<p id="supply-desc">قميص مطبوع بشكل جميل على قماش ناعم.</p>
+<div class="price">السعر: حسب المقاس والفئة</div>
+</div>
+<div class="slider">
+<button class="prev" onclick="moveSlide(-1,'supply')">›</button>
+<img id="supply-slide" src="pic/l-p-4-p-13.jpg" onclick="openLightbox('supply')">
+<button class="next" onclick="moveSlide(1,'supply')">‹</button>
+</div>
+</div>
+</section>
+
+<div id="lightbox">
+<span id="lightbox-close" onclick="closeLightbox()">✖</span>
+<div style="position:relative;display:flex;justify-content:center;align-items:center;width:90%;max-width:900px;">
+<button class="prev-btn" onclick="changeLightbox(-1)">‹</button>
+<img id="lightbox-img" src="">
+<button class="next-btn" onclick="changeLightbox(1)">›</button>
+</div>
+<div id="lightbox-caption"></div>
+<div id="lightbox-index"></div>
+</div>
+
+<section class="cta-section">
+<h2>محتاج ترتيبات الانتقال؟ نحن هنا لخدمتك بمحبة.</h2>
+<p>يمكنك التواصل الآن مع خدمة يوسف الرامي لتنظيم كل التفاصيل بسهولة وسلام.</p>
+<button class="cta-button" onclick="window.open('https://wa.me/201032867510','_blank')">📞 تواصل عبر واتساب الآن</button>
+</section>
+
+<footer>
+<p>© جميع الحقوق محفوظة لخدمة يوسف الرامي 2025</p>
+<p>📱 للتواصل عبر واتساب: <a href="https://wa.me/201032867510">01032867510</a></p>
+</footer>
+<script>
+// ===== Fade in/out عند تحميل الصفحة =====
+window.addEventListener('load', () => {
+  document.body.classList.add('show');
+});
+
+// ===== Intersection Observer للأقسام =====
+const observer = new IntersectionObserver(entries => {
+  entries.forEach(entry => {
+    if(entry.isIntersecting){
+      entry.target.classList.add('visible');
+      observer.unobserve(entry.target);
+    }
+  });
+},{threshold:0.2});
+
+document.querySelectorAll('section, .cards, .car-block, .slider-container').forEach(el => {
+  observer.observe(el);
+});
+
+// ===== روابط التنقل مع Fade Out/Fade In =====
+document.querySelectorAll('nav a').forEach(link => {
+  link.addEventListener('click', function(e){
+    e.preventDefault();
+    const target = document.querySelector(this.getAttribute('href'));
+    document.body.classList.remove('show'); // بداية fade out
+    setTimeout(() => {
+      target.scrollIntoView({behavior:'smooth'});
+      document.body.classList.add('show'); // fade in عند الوصول
+    }, 500); // مدة مطابقة للـ CSS transition
+  });
+});
+
+// ===== Slider =====
+const supplySlides = [
+  { img: "pic/l-p-4-p-13.jpg", title: "قميص بصورة العذراء مريم", desc: "قميص مطبوع بشكل جميل على قماش ناعم." },
+  { img: "pic/l-p-4-p-11.jpg", title: "قميص بصورة السيد المسيح", desc: "قميص فاخر يحمل صورة السيد المسيح بطريقة دقيقة." },
+  { img: "pic/images_(2).jpg", title: "تونية كاملة", desc: "تونية مسيحية مصنوعة من قماش عالي الجودة." }
+];
+
+const coffinSlides = [
+  { img: "pic/images.jpg", title: "صندوق خشب زان مطعم", desc: "صندوق فاخر بلمسات ذهبية يصلح لجميع الفئات." },
+  { img: "pic/397.jpg", title: "صندوق خشب اقتصادي", desc: "صندوق بسيط واقتصادي مناسب للفئات المختلفة." }
+];
+
+let supplyIndex = 0;
+let coffinIndex = 0;
+let currentGallery = 'supply';
+
+// Slider تلقائي
+setInterval(() => { moveSlide(1,'supply'); moveSlide(1,'coffin'); }, 5000);
+
+function moveSlide(step,type){
+  if(type==='supply'){
+    supplyIndex = (supplyIndex+step+supplySlides.length)%supplySlides.length;
+    updateSlide();
+  } else if(type==='coffin'){
+    coffinIndex = (coffinIndex+step+coffinSlides.length)%coffinSlides.length;
+    updateCoffinSlide();
+  }
+}
+
+function updateSlide(){
+  document.getElementById('supply-slide').src = supplySlides[supplyIndex].img;
+  document.getElementById('supply-title').innerText = supplySlides[supplyIndex].title;
+  document.getElementById('supply-desc').innerText = supplySlides[supplyIndex].desc;
+}
+
+function updateCoffinSlide(){
+  document.getElementById('coffin-slide').src = coffinSlides[coffinIndex].img;
+  document.getElementById('coffin-title').innerText = coffinSlides[coffinIndex].title;
+  document.getElementById('coffin-desc').innerText = coffinSlides[coffinIndex].desc;
+}
+
+// ===== Lightbox =====
+function openLightbox(gallery){
+  currentGallery=gallery;
+  document.getElementById('lightbox').style.display='flex';
+  document.body.classList.remove('show'); // fade out صغير عند فتح الصور
+  setTimeout(()=>{document.body.classList.add('show');},50);
+  updateLightbox();
+}
+
+function closeLightbox(){document.getElementById('lightbox').style.display='none';}
+
+function changeLightbox(step){
+  if(currentGallery==='supply'){supplyIndex=(supplyIndex+step+supplySlides.length)%supplySlides.length;}
+  else if(currentGallery==='coffin'){coffinIndex=(coffinIndex+step+coffinSlides.length)%coffinSlides.length;}
+  updateLightbox();
+}
+
+function updateLightbox(){
+  let slide,index,total;
+  if(currentGallery==='supply'){slide=supplySlides[supplyIndex];index=supplyIndex+1;total=supplySlides.length;}
+  else{slide=coffinSlides[coffinIndex];index=coffinIndex+1;total=coffinSlides.length;}
+  document.getElementById('lightbox-img').src=slide.img;
+  document.getElementById('lightbox-caption').innerHTML=`<strong>${slide.title}</strong><br>${slide.desc}`;
+  document.getElementById('lightbox-index').innerText=`${index} / ${total}`;
+}
+
+// ===== Swipe support =====
+let startX=0,endX=0;
+const lightboxContainer=document.getElementById('lightbox');
+lightboxContainer.addEventListener('touchstart',e=>{startX=e.touches[0].clientX;});
+lightboxContainer.addEventListener('touchmove',e=>{endX=e.touches[0].clientX;});
+lightboxContainer.addEventListener('touchend',()=>{
+  const diffX=endX-startX;
+  if(Math.abs(diffX)>50){ if(diffX>0){ changeLightbox(-1); } else { changeLightbox(1); } }
+  startX=0; endX=0;
+});
+</script>
+
+</body>
+</html>
